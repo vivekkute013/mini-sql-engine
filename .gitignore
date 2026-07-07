@@ -1,0 +1,7 @@
+build/
+*.o
+*.db
+.vscode/
+.DS_Store
+CMakeFiles/
+CMakeCache.txt
