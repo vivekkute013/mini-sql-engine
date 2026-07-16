@@ -1,42 +1,41 @@
 #include <iostream>
-#include "minisql/catalog/row.hpp"
-#include "minisql/catalog/schema.hpp"
+#include "minisql/index/bplus_tree.hpp"
 
-int main()
-{
-    // Define a schema : a 'users' table with 3 Columns
-    std::vector<minisql::Column> columns = {
-        minisql::Column("id", minisql::ColumnType::INTEGER),
-        minisql::Column("name", minisql::ColumnType::VARCHAR, 50),
-        minisql::Column("is_active", minisql::ColumnType::BOOLEAN)};
-    minisql::Schema schema(columns);
+int main() {
+    minisql::BPlusTree tree;
 
-    std::cout << "Row size for this Schema : " << schema.GetRowSize() << " bytes\n";
+    tree.Insert(10, 100);
+    tree.Insert(20, 200);
+    tree.Insert(30, 300);
+    tree.Insert(40, 400);
+    tree.Insert(50, 500);
 
-    // Build one real row of data matching that schema.
-    std::vector<minisql::Value> values = {
-        minisql::Value(minisql::ColumnType::INTEGER, int64_t(101)),
-        minisql::Value(minisql::ColumnType::VARCHAR, std::string("Vivek")),
-        minisql::Value(minisql::ColumnType::BOOLEAN, true)};
-    minisql::Row row(values);
+    int64_t result;
 
-    // Serialize it into raw buffer.
-    char buffer[256]; // storage
-    row.SerializeTo(buffer, schema);
-    std::cout << " Row serialized successfully. \n";
+    for(int64_t key : {10, 20, 30, 40, 50, 99}){
+        bool found = tree.Search(key, &result);
+        std::cout<< "Search "<<key<<" : ";
+        if(found){
+            std::cout<<"FOUND, value = "<<result<<"\n";
+        }else{
+            std::cout<<"NOT FOUND \n";
+        }
+    }
 
-    // Deserialized it back into a new row.
-    minisql::Row restored = minisql::Row::DeserializeFrom(buffer, schema);
+    // bool found10 = tree.Search(10, &result);
+    // std::cout << "Search 10: " << (found10 ? "FOUND, value=" : "NOT FOUND") ;
+    // if (found10) std::cout << result;
+    // std::cout << "\n";
 
-    // Print and Verify each value.
-    const auto &restored_values = restored.GetValues();
-    std::cout << "id : " << restored_values[0].GetInteger() << "\n";
-    std::cout << "name : " << restored_values[1].GetString() << "\n";
-    std::cout << "is_active " << (restored_values[2].GetBoolean() ? "true" : "false") << "\n";
+    // bool found20 = tree.Search(20, &result);
+    // std::cout << "Search 20: " << (found20 ? "FOUND, value=" : "NOT FOUND");
+    // if (found20) std::cout << result;
+    // std::cout << "\n";
 
-    bool ok = restored_values[0].GetInteger() == 101 && restored_values[1].GetString() == "Vivek" && restored_values[2].GetBoolean() == true;
+    // bool found99 = tree.Search(99, &result);
+    // std::cout << "Search 99: " << (found99 ? "FOUND (unexpected!)" : "NOT FOUND (correct)") << "\n";
 
-    std::cout << (ok ? "SUCCESS : row round-tripped correctly. \n" : "FAILURE : mismatch after deserialization. \n");
+
 
     return 0;
 }
