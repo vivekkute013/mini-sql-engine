@@ -8,5 +8,6 @@ add_executable(minisql
 src/main.cpp 
 src/storage/disk_manager.cpp
 src/catalog/row.cpp
+src/index/bplus_tree.cpp
 )
 target_include_directories(minisql PRIVATE include)
