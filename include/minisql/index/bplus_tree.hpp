@@ -16,12 +16,14 @@ namespace minisql{
     BPlusTreeNode* FindLeaf(int64_t key) const;
     void InsertIntoLeaf(BPlusTreeNode* leaf, int64_t key, int64_t value);
 
-    BPlusTreeNode* GetParent() const { return parent_; }
-    void SetParent(BPlusTreeNode* parent) { parent_ = parent ; }
+    // BPlusTreeNode* GetParent() const { return parent_; }
+    // void SetParent(BPlusTreeNode* parent) { parent_ = parent ; }
 
     void SplitLeafAndInsert(BPlusTreeNode* leaf, int64_t key, int64_t value);
 
     void InsertIntoParent(BPlusTreeNode* left, int64_t key, BPlusTreeNode* right);
+
+    void SplitInternalAndInsert(BPlusTreeNode* node, size_t insert_pos, int64_t key, BPlusTreeNode* right_child);
 
     BPlusTreeNode* root_;
   };
