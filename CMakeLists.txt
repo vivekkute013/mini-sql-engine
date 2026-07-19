@@ -9,5 +9,7 @@ src/main.cpp
 src/storage/disk_manager.cpp
 src/catalog/row.cpp
 src/index/bplus_tree.cpp
+src/parser/tokenizer.cpp
+src/parser/parser.cpp
 )
 target_include_directories(minisql PRIVATE include)
